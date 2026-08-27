@@ -1,6 +1,9 @@
 import os
 import asyncio
 import threading
+import shutil
+
+print("FFMPEG:", shutil.which("ffmpeg"))
 
 from dotenv import load_dotenv
 
