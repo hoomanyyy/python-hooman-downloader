@@ -4,10 +4,16 @@ import shutil
 
 def download_instagram_video(url):
 
+    COOKIE_FILE = os.path.join(
+        os.path.dirname(__file__),
+        "../www.youtube.com_cookies.txt"
+    )
+
     ydl_opts = {
         "format": "bestvideo+bestaudio/best",
         "ffmpeg_location": shutil.which("ffmpeg"),
         "outtmpl": "downloads/%(title)s.%(ext)s",
+        "cookiefile": COOKIE_FILE,
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
