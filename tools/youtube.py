@@ -13,7 +13,7 @@ def download_youtube_video(video_url):
 
     COOKIE_FILE = os.path.join(
         os.path.dirname(__file__),
-        "../cookie/youtube.txt"
+        "../cookies/youtube.txt"
     )
 
     print("COOKIE:", COOKIE_FILE)
