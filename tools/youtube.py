@@ -20,22 +20,14 @@ def download_youtube_video(video_url):
     print("EXISTS:", os.path.exists(COOKIE_FILE))
 
     ydl_opts = {
-        "format": "bestvideo*+bestaudio*/best",
+        "format": "best",
 
         "outtmpl": "downloads/%(title)s.%(ext)s",
-
-        "merge_output_format": "mp4",
 
         "cookiefile": COOKIE_FILE,
 
         "js_runtimes": {
             "node": {}
-        },
-
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["web"]
-            }
         },
 
         "postprocessors": [
@@ -45,7 +37,7 @@ def download_youtube_video(video_url):
             }
         ]
     }
-
+    
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
 
         info = ydl.extract_info(
