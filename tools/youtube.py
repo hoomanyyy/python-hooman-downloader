@@ -9,13 +9,7 @@ os.makedirs(
     exist_ok=True
 )
 
-def download_youtube_video(video_url):
-
-    COOKIE_FILE = os.path.join(
-    os.path.dirname(__file__),
-    "../www.youtube.com_cookies.txt"
-)
-
+def download_youtube_video(video_url):  
 
     ydl_opts = {
         "format": "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best",

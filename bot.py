@@ -130,16 +130,9 @@ async def instagram_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
     )
 
 
-
-# ---------------- DOWNLOAD HANDLER ----------------
-
-
 async def download_url(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     url = update.message.text.strip()
-
-
-    # -------- YOUTUBE --------
 
     if context.user_data.get("waiting_for_youtube"):
 
