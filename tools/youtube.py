@@ -1,6 +1,5 @@
 import os
 import yt_dlp
-import shutil
 
 DOWNLOAD_DIR = os.path.abspath("downloads")
 
@@ -9,7 +8,16 @@ os.makedirs(
     exist_ok=True
 )
 
-def download_youtube_video(video_url):  
+
+def download_youtube_video(video_url):
+
+    COOKIE_FILE = os.path.join(
+        os.path.dirname(__file__),
+        "../cookie/youtube.txt"
+    )
+
+    print("COOKIE:", COOKIE_FILE)
+    print("EXISTS:", os.path.exists(COOKIE_FILE))
 
     ydl_opts = {
         "format": "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best",
@@ -18,10 +26,16 @@ def download_youtube_video(video_url):
 
         "merge_output_format": "mp4",
 
-        "cookiefile": "cookies/youtube.txt",
+        "cookiefile": COOKIE_FILE,
 
         "js_runtimes": {
             "node": {}
+        },
+
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android"]
+            }
         },
 
         "postprocessors": [
