@@ -1,66 +1,71 @@
 import os
 import yt_dlp
 
-DOWNLOAD_DIR = os.path.abspath("downloads")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DOWNLOAD_DIR = os.path.join(BASE_DIR, "downloads")
+COOKIE_FILE = os.path.join(BASE_DIR, "..", "cookies", "youtube.txt")
 
-os.makedirs(
-    DOWNLOAD_DIR,
-    exist_ok=True
-)
+os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
 
-def download_youtube_video(video_url):
-
-    COOKIE_FILE = os.path.join(
-        os.path.dirname(__file__),
-        "../cookies/youtube.txt"
-    )
-
-    print("COOKIE:", COOKIE_FILE)
-    print("EXISTS:", os.path.exists(COOKIE_FILE))
-
-    ydl_opts = {
-        "format": "bestvideo*+bestaudio*/best",
-
-        "outtmpl": "downloads/%(title)s.%(ext)s",
-
+def build_opts(use_cookies: bool = False, verbose: bool = False) -> dict:
+    opts = {
+        "format": (
+            "bv*[vcodec^=avc1]+ba[acodec^=mp4a]/"
+            "bv*+ba/"
+            "b"
+        ),
+        "outtmpl": os.path.join(DOWNLOAD_DIR, "%(title).150B [%(id)s].%(ext)s"),
         "merge_output_format": "mp4",
 
-        "cookiefile": COOKIE_FILE,
+        "js_runtimes": {"deno": {}, "node": {}},
 
-        "js_runtimes": {
-            "node": {}
-        },
+        "remote_components": ["ejs:github"],
 
-        "extractor_args": {
-            "youtube": {
-                "player_client": ["web"]
-            }
-        },
+        "retries": 10,
+        "fragment_retries": 10,
+        "concurrent_fragment_downloads": 4,
+        "ignoreerrors": False,
+        "verbose": verbose,
 
-        "postprocessors": [
-            {
-                "key": "FFmpegVideoConvertor",
-                "preferedformat": "mp4"
-            }
-        ]
     }
 
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    if use_cookies:
+        if not os.path.isfile(COOKIE_FILE):
+            raise FileNotFoundError(f"cookie file not found: {COOKIE_FILE}")
+        opts["cookiefile"] = COOKIE_FILE
 
-        info = ydl.extract_info(
-            video_url,
-            download=True
-        )
+    return opts
 
-        filename = ydl.prepare_filename(info)
 
-        filename = (
-            os.path.splitext(filename)[0]
-            + ".mp4"
-        )
+def list_formats(video_url: str, use_cookies: bool = False) -> None:
+    opts = build_opts(use_cookies=use_cookies, verbose=True)
+    opts["listformats"] = True
+    with yt_dlp.YoutubeDL(opts) as ydl:
+        ydl.extract_info(video_url, download=False)
 
-        if os.path.isfile(filename):
-            return filename
+
+def download_youtube_video(video_url: str, use_cookies: bool = False) -> str | None:
+    opts = build_opts(use_cookies=use_cookies)
+
+    with yt_dlp.YoutubeDL(opts) as ydl:
+        info = ydl.extract_info(video_url, download=True)
+
+        downloads = info.get("requested_downloads") or []
+        if downloads:
+            path = downloads[0].get("filepath")
+            if path and os.path.isfile(path):
+                return path
 
         return None
+
+
+if __name__ == "__main__":
+    import sys
+
+    url = sys.argv[1] if len(sys.argv) > 1 else "https://www.youtube.com/watch?v=YWtZD6DjkZE"
+
+    if "--list" in sys.argv:
+        list_formats(url, use_cookies="--cookies" in sys.argv)
+    else:
+        print(download_youtube_video(url, use_cookies="--cookies" in sys.argv))
