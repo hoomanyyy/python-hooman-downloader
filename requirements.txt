@@ -1,6 +1,6 @@
 python-telegram-bot
-yt-dlp
-dotenv
+python-dotenv
 fastapi
 uvicorn
-instaloader
+yt-dlp
+yt-dlp-ejs

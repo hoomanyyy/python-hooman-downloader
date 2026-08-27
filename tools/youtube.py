@@ -16,11 +16,26 @@ def download_youtube_video(video_url):
     "../www.youtube.com_cookies.txt"
 )
 
+
     ydl_opts = {
-        "format": "bestvideo+bestaudio/best",
-        "ffmpeg_location": shutil.which("ffmpeg"),
+        "format": "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best",
+
         "outtmpl": "downloads/%(title)s.%(ext)s",
-        "cookiefile": COOKIE_FILE,
+
+        "merge_output_format": "mp4",
+
+        "cookiefile": "cookies/youtube.txt",
+
+        "js_runtimes": {
+            "node": {}
+        },
+
+        "postprocessors": [
+            {
+                "key": "FFmpegVideoConvertor",
+                "preferedformat": "mp4"
+            }
+        ]
     }
 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
