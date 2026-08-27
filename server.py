@@ -14,7 +14,7 @@ DOWNLOAD_DIR.mkdir(exist_ok=True)
 
 PUBLIC_URL = os.getenv(
     "PUBLIC_URL",
-    "http://127.0.0.1:8000"
+    "https://python-hooman-downloader.onrender.com"
 )
 
 files = {}
