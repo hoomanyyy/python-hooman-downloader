@@ -20,7 +20,7 @@ def download_youtube_video(video_url):
     print("EXISTS:", os.path.exists(COOKIE_FILE))
 
     ydl_opts = {
-        "format": "bv*[ext=mp4]+ba[ext=m4a]/b[ext=mp4]/best",
+        "format": "bestvideo+bestaudio/best",,
 
         "outtmpl": "downloads/%(title)s.%(ext)s",
 
